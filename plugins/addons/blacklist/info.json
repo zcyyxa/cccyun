@@ -1,0 +1,151 @@
+{
+    "name": "blacklist",
+    "title": "公共黑名单",
+    "author": "公共黑名单平台",
+    "link": "",
+    "version": "1.4",
+    "icon": "",
+    "desc": "把站里拉黑的人和被投诉的订单上报到公共黑名单平台，也把平台的黑名单下发到本站系统的黑名单表里，付款时由系统自动拦住。同步自动进行（系统计划任务每 60 秒一轮），不用手动点。不修改系统任何文件。",
+    "inputs": {
+        "api_url": {
+            "name": "平台接口地址",
+            "type": "input",
+            "required": true,
+            "note": "填到 api 这一层，例如 https://bl.example.com/api"
+        },
+        "api_key": {
+            "name": "平台接口密钥",
+            "type": "input",
+            "required": true,
+            "note": "平台「用户中心」里那串 32 位密钥"
+        },
+        "timeout": {
+            "name": "请求超时（秒）",
+            "type": "input",
+            "required": false,
+            "note": "默认 3 秒"
+        },
+        "complaint_sync": {
+            "name": "投诉处理时上报平台",
+            "type": "select",
+            "required": true,
+            "options": [
+                "不上报",
+                "上报"
+            ],
+            "value": "0",
+            "note": "系统处理买家投诉时，把这条投诉连着订单的真实信息报给平台。只收有真订单、有投诉正文的。"
+        },
+        "complaint_days": {
+            "name": "投诉上报天数",
+            "type": "input",
+            "required": false,
+            "note": "默认 7。平台单次最多计 180 天"
+        },
+        "link_complaint": {
+            "name": "同步时自动匹配投诉",
+            "type": "select",
+            "required": true,
+            "options": [
+                "关",
+                "开"
+            ],
+            "value": "1",
+            "note": "同步时能对上本地投诉记录的，按投诉上报（带订单号和投诉原文）"
+        },
+        "sync_days": {
+            "name": "本地黑名单同步天数",
+            "type": "input",
+            "required": false,
+            "note": "默认 180。本地那条写了到期时间的，按剩余天数报"
+        },
+        "skip_list": {
+            "name": "同步跳过名单",
+            "type": "input",
+            "required": false,
+            "note": "这些内容不报给平台、也不拦（手动上报不受影响）。逗号或空格分隔"
+        },
+        "auto_sync": {
+            "name": "每日兜底同步",
+            "type": "select",
+            "required": true,
+            "options": [
+                "关",
+                "开"
+            ],
+            "value": "0",
+            "note": "每天再补报一次。平时靠 60 秒一轮的计划任务自动同步"
+        },
+        "auto_sync_limit": {
+            "name": "每日兜底最多几条",
+            "type": "input",
+            "required": false,
+            "note": "默认 50"
+        },
+        "auto_refresh": {
+            "name": "每日刷新台账状态",
+            "type": "select",
+            "required": true,
+            "options": [
+                "关",
+                "开"
+            ],
+            "value": "0",
+            "note": "每天把报过的记录状态拉一遍，被平台退回了能看出来"
+        },
+        "report_days": {
+            "name": "手动上报默认天数",
+            "type": "input",
+            "required": false,
+            "note": "默认 7"
+        },
+        "push_enable": {
+            "name": "下发拦截",
+            "type": "select",
+            "required": true,
+            "options": [
+                "关",
+                "开"
+            ],
+            "value": "1",
+            "note": "开：把平台黑名单写进系统黑名单表（备注「公共黑名单#编号」），付款时被系统拦住。关：只上报，不拦人。"
+        },
+        "pay_interval": {
+            "name": "付款路径同步间隔（秒）",
+            "type": "input",
+            "required": false,
+            "note": "默认 10，最小 3。基本就等于「平台上拉黑一个人到本站拦住他」的时间"
+        },
+        "pull_interval": {
+            "name": "普通页面同步间隔（秒）",
+            "type": "input",
+            "required": false,
+            "note": "默认 60，最小 15"
+        },
+        "pull_type": {
+            "name": "下发哪些类型",
+            "type": "select",
+            "required": true,
+            "options": [
+                "账号和 IP 都要",
+                "只要账号",
+                "只要 IP"
+            ],
+            "value": "0",
+            "note": "选「只要账号」时，IP 条目仍然记在本地，只是不写进系统黑名单表"
+        },
+        "pull_min_reports": {
+            "name": "被几家报过才下发",
+            "type": "input",
+            "required": false,
+            "note": "默认 1。填 2 就是至少两家报过才拦，误报更少、生效慢一点"
+        },
+        "verify_ttl": {
+            "name": "复核间隔（秒）",
+            "type": "input",
+            "required": false,
+            "note": "默认 1800。已下发的条目每隔这么久回平台核对一次（撤销 / 延长 / 过期）"
+        }
+    },
+    "note": "1. 填好「平台接口地址」和「平台接口密钥」。<br>2. 同步是自动的（系统计划任务每 60 秒一轮），不用手动点。<br>3. 平台的黑名单会写进系统自己那张黑名单表，在「交易管理 - 黑名单管理」里看得见、也删得掉。"
+}
