@@ -11,7 +11,8 @@
             "name": "平台接口地址",
             "type": "input",
             "required": true,
-            "note": "填到 api 这一层，例如 https://bl.example.com/api"
+            "note": "填到 api 这一层，默认 https://yzf.aiapizz.com/api（结尾带不带斜杠都行）",
+            "value": "https://yzf.aiapizz.com/api"
         },
         "api_key": {
             "name": "平台接口密钥",
