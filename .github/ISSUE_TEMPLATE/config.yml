@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 官方 QQ 群 439392221（答疑最快）
+    url: https://aiapizz.com/
+    about: 装不上、拦错了、想加功能，群里直接说。Issue 里也能提，但群里发截图更方便。
+  - name: 官网文档中心（安装教程 / 接口文档 / 常见问题）
+    url: https://aiapizz.com/docs.php
+    about: 大部分问题这里都有答案，比翻仓库快。
+  - name: 插件下载与说明
+    url: https://aiapizz.com/plugins.php
+    about: 下载最新的插件包，看每个插件的简介和更新情况。

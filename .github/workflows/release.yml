@@ -1,0 +1,62 @@
+name: 打包发布
+
+# 推一个 tag 上来（例如 v1.4、v1.5.0），自动把 plugins/addons 下每个插件按
+# 「插件名-版本号.zip」打好，挂到同名 Release 上。
+#
+# zip 里的目录结构就是系统要的样子（顶层是插件目录本身，例如 blacklist/...），
+# 下载下来直接传到 plugins/addons/ 就行，和手动打包的结果一致。
+# 版本号读的是每个插件自己的 info.json，所以不用在 tag 名字里写版本。
+#
+# 用不上就把这个文件删掉，手动打包一样，不影响仓库里其它任何东西。
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 按每个插件 info.json 里的版本号打包
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cd plugins/addons
+          found=0
+          for dir in */; do
+            name="${dir%/}"
+            if [ ! -f "$name/info.json" ]; then
+              echo "跳过 $name（没有 info.json）"
+              continue
+            fi
+            ver="$(node -e 'const fs=require("fs");process.stdout.write(String(JSON.parse(fs.readFileSync(process.argv[1],"utf8")).version||"0.0"))' "$name/info.json")"
+            zip -qr "../../dist/${name}-${ver}.zip" "$name"
+            echo "打好 dist/${name}-${ver}.zip"
+            found=$((found + 1))
+          done
+          if [ "$found" -eq 0 ]; then
+            echo "plugins/addons 下没有插件，退出"
+            exit 1
+          fi
+          ls -l ../../dist
+
+      - name: 建 Release（同名 tag 已有就只补附件）
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/*.zip --clobber
+          else
+            gh release create "$tag" \
+              --title "$tag" \
+              --notes "插件包已经按「插件名-版本号」打好了，下载后传到站点根目录的 plugins/addons/ 里，再到后台「插件管理」安装启用即可。每个版本改了什么见 CHANGELOG.md。" \
+              dist/*.zip
+          fi
