@@ -57,6 +57,6 @@ jobs:
           else
             gh release create "$tag" \
               --title "$tag" \
-              --notes "插件包已经按「插件名-版本号」打好了，下载后传到站点根目录的 plugins/addons/ 里，再到后台「插件管理」安装启用即可。每个版本改了什么见 CHANGELOG.md。" \
+              --notes "插件包已经按「插件名-版本号」打好了，下载后传到站点根目录的 plugins/addons/ 里，再到后台「插件管理」安装启用即可。怎么装、每一项配置什么意思、每个版本改了什么，都在每个插件自己的 README.md 里。" \
               dist/*.zip
           fi
